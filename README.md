@@ -1,5 +1,8 @@
 # GraNet
 
+<img src="https://github.com/Shiweiliuiiiiiii/GraNet/blob/main/GraNet.pdf" width="500" height="300">
+
+
 **Sparse Training via Boosting Pruning Plasticity with Neuroregeneration**<br>
 Shiwei Liu,Tianlong Chen,Xiaohan Chen,Zahra Atashgahi,Lu Yin,Huanyu Kou,Li Shen,Mykola Pechenizkiy,Zhangyang Wang, Decebal Constantin Mocanu<br>
 https://arxiv.org/abs/2106.10404<br>
