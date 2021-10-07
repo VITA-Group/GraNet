@@ -1,6 +1,6 @@
 # GraNet
 
-<img src="https://github.com/Shiweiliuiiiiiii/GraNet/blob/main/GraNet_github.png" width="400" height="250">
+<img src="https://github.com/Shiweiliuiiiiiii/GraNet/blob/main/GraNet_github.png" width="500" height="300">
 
 
 **Sparse Training via Boosting Pruning Plasticity with Neuroregeneration**<br>
