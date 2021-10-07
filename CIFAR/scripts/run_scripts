@@ -1,0 +1,14 @@
+
+model=ResNet50
+data=cifar10
+
+# GraNet with ResNet-50 on CIFAR-10
+python main.py --sparse --seed 18 --death-rate 0.5 --optimizer sgd --method GraNet --sparse_init ERK --init-density 0.50 --final-density 0.10 --update_frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model $model --data $data  --batch-size 128 --growth gradient --death magnitude --redistribution none
+
+model=vgg19
+data=cifar10
+# GraNet with vgg-19 on CIFAR-10
+python main.py --sparse --seed 18 --death-rate 0.5 --optimizer sgd --method GraNet --sparse_init ERK --init-density 0.50 --final-density 0.10 --update_frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model $model --data $data  --batch-size 128 --growth gradient --death magnitude --redistribution none
+
+
+source deactivate
