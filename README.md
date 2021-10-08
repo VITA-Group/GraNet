@@ -12,7 +12,7 @@ Abstract: *Works on lottery ticket hypothesis (LTH) and single-shot network prun
 
 This code base is created by Shiwei Liu [s.liu3@tue.nl](mailto:s.liu3@tue.nl) during his Ph.D. at Eindhoven University of Technology.<br>
 
-This repository contains implementaions of sparse training methods: [GraNet](https://arxiv.org/abs/2106.10404), [RigL] (https://arxiv.org/abs/1911.11134), [In-Time Over-Parameterization](https://arxiv.org/abs/2102.02887), [GMP](https://arxiv.org/abs/1902.09574), [Weigh Rewinding](https://arxiv.org/abs/1912.05671) [Learning Rate Rewinding](https://arxiv.org/abs/2003.02389).
+This repository contains implementaions of sparse training methods: [GraNet](https://arxiv.org/abs/2106.10404), [RigL](https://arxiv.org/abs/1911.11134), [In-Time Over-Parameterization](https://arxiv.org/abs/2102.02887), [GMP](https://arxiv.org/abs/1902.09574), [Weigh Rewinding](https://arxiv.org/abs/1912.05671) [Learning Rate Rewinding](https://arxiv.org/abs/2003.02389).
 
 ## Requirements 
 The library requires Python 3.6.7, PyTorch v1.5.1, and CUDA v10.1. Other version of Pytorch should also work.
@@ -28,7 +28,7 @@ python main.py --sparse --method GraNet --death-rate 0.5 --optimizer sgd --spars
 
 python main.py --sparse --method GraNet --death-rate 0.5 --optimizer sgd --sparse_init ERK --init-density 0.50 --final-density 0.10 --update_frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
 
-### RigL 
+### RigL (ITOP Version)
 
 python main.py --sparse --method DST --death-rate 0.5 --optimizer sgd --sparse_init ERK --init-density 0.10 --final-density 0.10 --update_frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
 
