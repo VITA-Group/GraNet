@@ -17,8 +17,7 @@ This repository contains implementaions of sparse training methods: [GraNet](htt
 ## Requirements 
 The library requires Python 3.6.7, PyTorch v1.5.1, and CUDA v10.1. Other version of Pytorch should also work.
 
-
-## To use different sparse training methods 
+ To use different sparse training methods 
 
 ### GraNet (s_i = 0) start from a dense network
 
