@@ -158,8 +158,6 @@ def main():
     parser.add_argument('--seed', type=int, default=17, metavar='S', help='random seed (default: 17)')
     parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                         help='how many batches to wait before logging training status')
-    parser.add_argument('--update_frequency', type=int, default=100, metavar='N',
-                        help='how many iterations to train between mask update')
     parser.add_argument('--optimizer', type=str, default='sgd', help='The optimizer to use. Default: sgd. Options: sgd, adam.')
     randomhash = ''.join(str(time.time()).split('.'))
     parser.add_argument('--save', type=str, default=randomhash + '.pt',
@@ -308,7 +306,7 @@ def main():
             print_and_log('Current learning rate: {0}. Time taken for epoch: {1:.2f} seconds.\n'.format(optimizer.param_groups[0]['lr'], time.time() - t0))
 
         print('Testing model')
-        model.load_state_dict(torch.load(os.path.join(save_subfolder, 'model_final.pth')))
+        model.load_state_dict(torch.load(os.path.join(save_subfolder, 'model_final.pth'))['state_dict'])
         test_acc = evaluate(args, model, device, test_loader, is_test_set=True)
         print('Test accuracy is:', test_acc)
 
