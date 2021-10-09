@@ -11,8 +11,9 @@ def add_sparse_args(parser):
     parser.add_argument('--redistribution', type=str, default='none', help='Redistribution mode. Choose from: momentum, magnitude, nonzeros, or none.')
     parser.add_argument('--death-rate', type=float, default=0.50, help='The pruning rate / death rate for Zero-Cost Neuroregeneration.')
     parser.add_argument('--pruning-rate', type=float, default=0.50, help='The pruning rate / death rate.')
-    parser.add_argumeant('--sparse', action='store_true', help='Enable sparse mode. Default: True.')
+    parser.add_argument('--sparse', action='store_true', help='Enable sparse mode. Default: True.')
     parser.add_argument('--fix', action='store_true', help='Fix topology during training. Default: True.')
+    parser.add_argument('--update-frequency', type=int, default=100, metavar='N', help='how many iterations to train between mask update')
     parser.add_argument('--sparse-init', type=str, default='ERK, uniform, uniform_structured for sparse training', help='sparse initialization')
     # hyperparameters for gradually pruning
     parser.add_argument('--method', type=str, default='GraNet', help='method name: DST, GraNet, GraNet_uniform, GMP, GMO_uniform')
@@ -435,7 +436,7 @@ class Masking(object):
 
 
     def pruning(self, step):
-        # prune_rate = 1 - self.args.final_density - self.args.ini_density
+        # prune_rate = 1 - self.args.final_density - self.args.init_density
         curr_prune_iter = int(step / self.prune_every_k_steps)
         final_iter = int((self.args.final_prune_epoch * len(self.loader)*self.args.multiplier) / self.prune_every_k_steps)
         ini_iter = int((self.args.init_prune_epoch * len(self.loader)*self.args.multiplier) / self.prune_every_k_steps)
@@ -447,7 +448,7 @@ class Masking(object):
 
         if curr_prune_iter >= ini_iter and curr_prune_iter <= final_iter:
             prune_decay = (1 - ((curr_prune_iter - ini_iter) / total_prune_iter)) ** 3
-            curr_prune_rate = (1 - self.args.ini_density) + (self.args.ini_density - self.args.final_density) * (
+            curr_prune_rate = (1 - self.args.init_density) + (self.args.init_density - self.args.final_density) * (
                     1 - prune_decay)
 
             weight_abs = []
@@ -466,7 +467,7 @@ class Masking(object):
             for module in self.modules:
                 for name, weight in module.named_parameters():
                     if name not in self.masks: continue
-                    self.masks[name] = ((torch.abs(weight)) >= acceptable_score).float()
+                    self.masks[name] = ((torch.abs(weight)) > acceptable_score).float() # must be > to prevent acceptable_score is zero, leading to dense tensors
 
             self.apply_mask()
 
@@ -483,7 +484,7 @@ class Masking(object):
                 (total_size-sparse_size) / total_size))
 
     def pruning_uniform(self, step):
-        # prune_rate = 1 - self.args.final_density - self.args.ini_density
+        # prune_rate = 1 - self.args.final_density - self.args.init_density
         curr_prune_iter = int(step / self.prune_every_k_steps)
         final_iter = (self.args.final_prune_epoch * len(self.loader)*self.args.multiplier) / self.prune_every_k_steps
         ini_iter = (self.args.init_prune_epoch * len(self.loader)*self.args.multiplier) / self.prune_every_k_steps
@@ -494,7 +495,7 @@ class Masking(object):
 
         if curr_prune_iter >= ini_iter and curr_prune_iter <= final_iter:
             prune_decay = (1 - ((curr_prune_iter - ini_iter) / total_prune_iter)) ** 3
-            curr_prune_rate = (1 - self.args.ini_density) + (self.args.ini_density - self.args.final_density) * (
+            curr_prune_rate = (1 - self.args.init_density) + (self.args.init_density - self.args.final_density) * (
                     1 - prune_decay)
             # keep the density of the last layer as 0.2 if spasity is larger then 0.8
             if curr_prune_rate >= 0.8:
@@ -554,7 +555,7 @@ class Masking(object):
                     self.masks.pop(name)
                     print(f"pop out {name}")
 
-        self.init(mode=self.args.sparse_init, density=self.args.ini_density, grad_dict=grad_dic)
+        self.init(mode=self.args.sparse_init, density=self.args.init_density, grad_dict=grad_dic)
 
 
     def remove_weight(self, name):
@@ -720,12 +721,7 @@ class Masking(object):
                 val = '{0}: {1}->{2}, density: {3:.3f}'.format(name, self.name2nonzeros[name], num_nonzeros, num_nonzeros/float(mask.numel()))
                 print(val)
 
-
-        for module in self.modules:
-            for name, tensor in module.named_parameters():
-                if name not in self.masks: continue
-                print('Death rate: {0}\n'.format(self.name2death_rate[name]))
-                break
+        print('Death rate: {0}\n'.format(self.death_rate))
 
     def reset_momentum(self):
         """
