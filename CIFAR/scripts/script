@@ -18,7 +18,7 @@ for density in 0.1 0.05 0.02
 do
   for seed in 18 19 20
   do
-  python main.py --sparse --seed 18 --death-rate 0.5 --final-prune-epoch $final --optimizer sgd --method GraNet --sparse-init ERK --init-density 0.50 --final-density $density --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model $model --data $data  --batch-size 128 --growth gradient --death magnitude --redistribution none
+  python main.py --sparse --seed $seed --death-rate 0.5 --final-prune-epoch $final --optimizer sgd --method GraNet --sparse-init ERK --init-density 0.50 --final-density $density --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model $model --data $data  --batch-size 128 --growth gradient --death magnitude --redistribution none
   done
 done
 
@@ -30,7 +30,7 @@ for density in 0.1 0.05 0.02
 do
   for seed in 18 19 20
   do
-  python main.py --sparse --seed 18 --death-rate 0.5 --final-prune-epoch $final --optimizer sgd --method GraNet --sparse-init ERK --init-density 0.50 --final-density $density --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model $model --data $data  --batch-size 128 --growth gradient --death magnitude --redistribution none
+  python main.py --sparse --seed $seed --death-rate 0.5 --final-prune-epoch $final --optimizer sgd --method GraNet --sparse-init ERK --init-density 0.50 --final-density $density --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model $model --data $data  --batch-size 128 --growth gradient --death magnitude --redistribution none
   done
 done
 
