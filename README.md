@@ -12,7 +12,7 @@ Abstract: *Works on lottery ticket hypothesis (LTH) and single-shot network prun
 
 This code base is created by Shiwei Liu [s.liu3@tue.nl](mailto:s.liu3@tue.nl) during his Ph.D. at Eindhoven University of Technology.<br>
 
-This repository contains implementaions of sparse training methods: [GraNet](https://arxiv.org/abs/2106.10404), [RigL](https://arxiv.org/abs/1911.11134), [In-Time Over-Parameterization](https://arxiv.org/abs/2102.02887), [GMP](https://arxiv.org/abs/1902.09574), [Weigh Rewinding](https://arxiv.org/abs/1912.05671) [Learning Rate Rewinding](https://arxiv.org/abs/2003.02389).
+This repository contains implementaions of sparse training methods: [GraNet](https://arxiv.org/abs/2106.10404), [RigL](https://arxiv.org/abs/1911.11134), [In-Time Over-Parameterization](https://arxiv.org/abs/2102.02887), [GMP](https://arxiv.org/abs/1902.09574)
 
 ## Requirements 
 The library requires Python 3.6.7, PyTorch v1.5.1, and CUDA v10.1. Other version of Pytorch should also work.
