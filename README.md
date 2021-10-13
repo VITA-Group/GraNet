@@ -17,7 +17,7 @@ This repository contains implementaions of sparse training methods: [GraNet](htt
 ## Requirements 
 The library requires Python 3.6.7, PyTorch v1.5.1, and CUDA v10.1. Other version of Pytorch should also work.
 
- To use different sparse training methods on CIFAR
+## To use different sparse training methods on CIFAR
 
 ### GraNet (s_i = 0) start from a dense network
 
@@ -46,6 +46,13 @@ python main.py --sparse --method GMP --death-rate 0.5 --optimizer sgd --sparse-i
 
 
 More training scripts of GraNet can be found in the scripts subdirectory
+
+## To use different sparse training methods on ImageNet
+
+cd ImageNet
+
+python $1multiproc.py --nproc_per_node 4 $1main.py --sparse --sparse_init ERK --method GraNet --init_prune_epoch 0 --final_prune_epoch 30 --init-density 0.5 --final-density 0.2 --multiplier 1 --growth gradient --seed 17 --master_port 5555 -j5 -p 500 --arch resnet50 -c fanin --update_frequency 4000 --label-smoothing 0.1 -b 256 --lr 0.1 --warmup 5 --density 0.2 $2 ../../imagenet2012/ --epochs 100
+
 
 
 More information is coming soon
