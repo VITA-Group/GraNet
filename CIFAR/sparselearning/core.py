@@ -99,12 +99,6 @@ class Masking(object):
         self.name2death_rate = {}
         self.steps = 0
 
-        # global growth/death state
-        self.threshold = threshold
-        self.growth_threshold = threshold
-        self.growth_increment = 0.2
-        self.increment = 0.2
-        self.tolerance = 0.02
         if self.args.fix:
             self.prune_every_k_steps = None
         else:
@@ -112,8 +106,17 @@ class Masking(object):
 
 
     def init(self, mode='ER', density=0.05, erk_power_scale=1.0, grad_dict=None):
-        self.density = density
-        if self.sparse_init == 'prune_uniform':
+        if self.args.method == 'GMP':
+            print('initialized with GMP, ones')
+            self.baseline_nonzero = 0
+            for module in self.modules:
+                for name, weight in module.named_parameters():
+                    if name not in self.masks: continue
+                    self.masks[name] = torch.ones_like(weight, dtype=torch.float32, requires_grad=False).cuda()
+                    self.baseline_nonzero += (self.masks[name] != 0).sum().int().item()
+            self.apply_mask()
+
+        elif self.sparse_init == 'prune_uniform':
             # used for pruning stabability test
             print('initialized by prune_uniform')
             self.baseline_nonzero = 0
@@ -130,7 +133,7 @@ class Masking(object):
                     self.baseline_nonzero += (self.masks[name] != 0).sum().int().item()
             self.apply_mask()
 
-        if self.sparse_init == 'prune_global':
+        elif self.sparse_init == 'prune_global':
             # used for pruning stabability test
             print('initialized by prune_global')
             self.baseline_nonzero = 0
@@ -161,7 +164,7 @@ class Masking(object):
                     self.masks[name] = ((torch.abs(weight)) >= acceptable_score).float()
             self.apply_mask()
 
-        if self.sparse_init == 'prune_and_grow_uniform':
+        elif self.sparse_init == 'prune_and_grow_uniform':
             # used for pruning stabability test
             print('initialized by pruning and growing uniformly')
 
@@ -193,7 +196,7 @@ class Masking(object):
                     self.baseline_nonzero += (self.masks[name] != 0).sum().int().item()
             self.apply_mask()
 
-        if self.sparse_init == 'prune_and_grow_global':
+        elif self.sparse_init == 'prune_and_grow_global':
             # used for pruning stabability test
             print('initialized by pruning and growing globally')
             self.baseline_nonzero = 0
@@ -242,7 +245,7 @@ class Masking(object):
             self.apply_mask()
 
         # structured pruning
-        if self.sparse_init == 'prune_structured':
+        elif self.sparse_init == 'prune_structured':
             # uniformly structured pruning
             print('initialized by pruning structured')
 
@@ -262,7 +265,7 @@ class Masking(object):
                     self.masks[name][idx[:k]] = 0.0
             self.apply_mask()
 
-        if self.sparse_init == 'prune_and_grow_structured':
+        elif self.sparse_init == 'prune_and_grow_structured':
             # # uniformly structured pruning
             print('initialized by prune_and_grow_structured')
 
@@ -298,7 +301,7 @@ class Masking(object):
                     self.masks[name][idx[:num_remove]] = 1.0
             self.apply_mask()
 
-        if self.sparse_init == 'uniform':
+        elif self.sparse_init == 'uniform':
             self.baseline_nonzero = 0
             for module in self.modules:
                 for name, weight in module.named_parameters():
@@ -308,7 +311,7 @@ class Masking(object):
                     self.baseline_nonzero += weight.numel() * density
             self.apply_mask()
 
-        if self.sparse_init == 'uniform_structured':
+        elif self.sparse_init == 'uniform_structured':
             self.baseline_nonzero = 0
             for module in self.modules:
                 for name, weight in module.named_parameters():
@@ -319,7 +322,7 @@ class Masking(object):
                     self.masks[name][zero_idx] = 0.0
             self.apply_mask()
 
-        if self.sparse_init == 'ERK':
+        elif self.sparse_init == 'ERK':
             print('initialize by ERK')
             for name, weight in self.masks.items():
                 self.total_params += weight.numel()
