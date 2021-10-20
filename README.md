@@ -36,6 +36,8 @@ Options:
 * --prune-rate (float) - initial pruning rate (default 0.5).
 * --update-frequency (int) - number of training iterations between two steps of zero-cost neuroregeneration.
 
+'''
+
 The sparse operatin is in the sparsetraining/core.py file. 
 
 ### GraNet (s_i = 0) starts from a dense network
