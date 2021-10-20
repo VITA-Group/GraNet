@@ -27,16 +27,16 @@ Options:
 * --sparse-init - type of sparse initialization. Choose from: ERK, uniform, GMP, prune_uniform, prune_global, prune_and_grow_uniform, prune_and_grow_global, prune_structured, prune_and_grow_structured
 * --model (str) - type of networks
 * --growth (str) - growth mode. Choose from: random, gradient, momentum
-* --death (str) - removing mode. Choose from: magnitude, SET, threshold
+* --prune (str) - removing mode. Choose from: magnitude, SET, threshold
 * --redistribution (str) - redistribution mode. Choose from: magnitude, nonzeros, or none. (default none)
 * --init-density (float) - initial density of the sparse model. (default 0.50)
 * --final-density (float) - target density of the sparse model. (default 0.05)
 * --init-prune-epoch (int) - the starting epoch of gradual pruning.
 * --final-prune-epoch (int) - the ending epoch of gradual pruning.
-* --prune-rate (float) - initial pruning rate (default 0.5).
+* --prune-rate (float) - The pruning rate / death rate for Zero-Cost Neuroregeneration.
 * --update-frequency (int) - number of training iterations between two steps of zero-cost neuroregeneration.
 
-'''
+```
 
 The sparse operatin is in the sparsetraining/core.py file. 
 
