@@ -19,13 +19,32 @@ The library requires Python 3.6.7, PyTorch v1.5.1, and CUDA v10.1. Other version
 
 ## To use different sparse training methods on CIFAR
 
-### GraNet (s_i = 0) start from a dense network
+```
+
+Options:
+* --sparse - Enable sparse mode (remove this if want to train dense model)
+* --method - type of sparse training method. Choose from: GraNet, GraNet_uniform, DST, GMP, GMP_uniform
+* --sparse-init - type of sparse initialization. Choose from: ERK, uniform, GMP, prune_uniform, prune_global, prune_and_grow_uniform, prune_and_grow_global, prune_structured, prune_and_grow_structured
+* --model (str) - type of networks
+* --growth (str) - growth mode. Choose from: random, gradient, momentum
+* --death (str) - removing mode. Choose from: magnitude, SET, threshold
+* --redistribution (str) - redistribution mode. Choose from: magnitude, nonzeros, or none. (default none)
+* --init-density (float) - initial density of the sparse model. (default 0.50)
+* --final-density (float) - target density of the sparse model. (default 0.05)
+* --init-prune-epoch (int) - the starting epoch of gradual pruning.
+* --final-prune-epoch (int) - the ending epoch of gradual pruning.
+* --prune-rate (float) - initial pruning rate (default 0.5).
+* --update-frequency (int) - number of training iterations between two steps of zero-cost neuroregeneration.
+
+The sparse operatin is in the sparsetraining/core.py file. 
+
+### GraNet (s_i = 0) starts from a dense network
 
 cd CIFAR
 
 python main.py --sparse --method GraNet --death-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 1 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
 
-### GraNet (s_i = 0.5) start from a 50% sparse network
+### GraNet (s_i = 0.5) starts from a 50% sparse network
 
 cd CIFAR
 
