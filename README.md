@@ -82,20 +82,20 @@ dense-to-sparse training (s_i=0.0)
 
 cd ImageNet
 
-python $1multiproc.py --nproc_per_node 2 $1main.py --sparse --sparse_init ERK --method GraNet --init_prune_epoch 0 --final_prune_epoch 30 --init-density 0.0 --final-density 0.2 --multiplier 1 --growth gradient --seed 17 --master_port 5555 -j5 -p 500 --arch resnet50 -c fanin --update_frequency 4000 --label-smoothing 0.1 -b 64 --lr 0.1 --warmup 5 --density 0.2 $2 ../../imagenet2012/ --epochs 100
+python $1multiproc.py --nproc_per_node 2 $1main.py --sparse --sparse_init ERK --method GraNet --init-prune-epoch 0 --final-prune-epoch 30 --init-density 0.0 --final-density 0.2 --multiplier 1 --growth gradient --seed 17 --master_port 5555 -j5 -p 500 --arch resnet50 -c fanin --update-frequency 4000 --label-smoothing 0.1 -b 64 --lr 0.1 --warmup 5 --density 0.2 $2 ../../imagenet2012/ --epochs 100
 
 ### GMP
 
 cd ImageNet
 
-python $1multiproc.py --nproc_per_node 2 $1main.py --sparse --sparse_init ERK --method GMP --init_prune_epoch 0 --final_prune_epoch 30 --init-density 0.0 --final-density 0.2 --multiplier 1 --growth gradient --seed 17 --master_port 5555 -j5 -p 500 --arch resnet50 -c fanin --update_frequency 4000 --label-smoothing 0.1 -b 64 --lr 0.1 --warmup 5 --density 0.2 $2 ../../imagenet2012/ --epochs 100
+python $1multiproc.py --nproc_per_node 2 $1main.py --sparse --sparse_init ERK --method GMP --init-prune-epoch 0 --final-prune-epoch 30 --init-density 0.0 --final-density 0.2 --multiplier 1 --growth gradient --seed 17 --master_port 5555 -j5 -p 500 --arch resnet50 -c fanin --update-frequency 4000 --label-smoothing 0.1 -b 64 --lr 0.1 --warmup 5 --density 0.2 $2 ../../imagenet2012/ --epochs 100
 
 ### RigL (ITOP Version)
 
 cd ImageNet
 
 
-python $1multiproc.py --nproc_per_node 2 $1main.py --sparse --sparse_init ERK --method DST --init_prune_epoch 0 --final_prune_epoch 30 --init-density 0.0 --final-density 0.2 --multiplier 1 --growth gradient --seed 17 --master_port 5555 -j5 -p 500 --arch resnet50 -c fanin --update_frequency 4000 --label-smoothing 0.1 -b 64 --lr 0.1 --warmup 5 --density 0.2 $2 ../../imagenet2012/ --epochs 100
+python $1multiproc.py --nproc_per_node 2 $1main.py --sparse --sparse_init ERK --method DST --init-prune-epoch 0 --final-prune-epoch 30 --init-density 0.0 --final-density 0.2 --multiplier 1 --growth gradient --seed 17 --master_port 5555 -j5 -p 500 --arch resnet50 -c fanin --update-frequency 4000 --label-smoothing 0.1 -b 64 --lr 0.1 --warmup 5 --density 0.2 $2 ../../imagenet2012/ --epochs 100
 
 change --final-density to control the target sparsity
 
