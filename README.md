@@ -33,7 +33,8 @@ Options:
 * --final-density (float) - target density of the sparse model. (default 0.05)
 * --init-prune-epoch (int) - the starting epoch of gradual pruning.
 * --final-prune-epoch (int) - the ending epoch of gradual pruning.
-* --prune-rate (float) - The pruning rate / death rate for Zero-Cost Neuroregeneration.
+* --prune-rate (float) - The pruning rate / 
+rate for Zero-Cost Neuroregeneration.
 * --update-frequency (int) - number of training iterations between two steps of zero-cost neuroregeneration.
 
 ```
@@ -44,26 +45,26 @@ The sparse operatin is in the sparsetraining/core.py file.
 
 cd CIFAR
 
-python main.py --sparse --method GraNet --death-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 1 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
+python main.py --sparse --method GraNet --prune-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 1 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
 
 ### GraNet (s_i = 0.5) starts from a 50% sparse network
 
 cd CIFAR
 
-python main.py --sparse --method GraNet --death-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 0.50 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
+python main.py --sparse --method GraNet --prune-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 0.50 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
 
 ### RigL (ITOP Version)
 
 cd CIFAR
 
-python main.py --sparse --method DST --death-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 0.10 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
+python main.py --sparse --method DST --prune-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 0.10 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
 
 
 ### GMP 
 
 cd CIFAR
 
-python main.py --sparse --method GMP --death-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 1 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
+python main.py --sparse --method GMP --prune-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 1 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
 
 
 More training scripts of GraNet can be found in the scripts subdirectory
