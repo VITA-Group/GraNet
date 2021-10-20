@@ -7,9 +7,9 @@ import math
 def add_sparse_args(parser):
     # hyperparameters for Zero-Cost Neuroregeneration
     parser.add_argument('--growth', type=str, default='random', help='Growth mode. Choose from: momentum, random, and momentum_neuron.')
-    parser.add_argument('--death', type=str, default='magnitude', help='Death mode / pruning mode. Choose from: magnitude, SET, threshold, CS_death.')
+    parser.add_argument('--prune', type=str, default='magnitude', help='Death mode / pruning mode. Choose from: magnitude, SET, threshold, CS_death.')
     parser.add_argument('--redistribution', type=str, default='none', help='Redistribution mode. Choose from: momentum, magnitude, nonzeros, or none.')
-    parser.add_argument('--death-rate', type=float, default=0.50, help='The pruning rate / death rate for Zero-Cost Neuroregeneration.')
+    parser.add_argument('--prune-rate', type=float, default=0.50, help='The pruning rate / death rate for Zero-Cost Neuroregeneration.')
     parser.add_argument('--pruning-rate', type=float, default=0.50, help='The pruning rate / death rate.')
     parser.add_argument('--sparse', action='store_true', help='Enable sparse mode. Default: True.')
     parser.add_argument('--fix', action='store_true', help='Fix topology during training. Default: True.')
@@ -25,8 +25,8 @@ def add_sparse_args(parser):
 
 
 class CosineDecay(object):
-    def __init__(self, death_rate, T_max, eta_min=0.005, last_epoch=-1):
-        self.sgd = optim.SGD(torch.nn.ParameterList([torch.nn.Parameter(torch.zeros(1))]), lr=death_rate)
+    def __init__(self, prune_rate, T_max, eta_min=0.005, last_epoch=-1):
+        self.sgd = optim.SGD(torch.nn.ParameterList([torch.nn.Parameter(torch.zeros(1))]), lr=prune_rate)
         self.cosine_stepper = torch.optim.lr_scheduler.CosineAnnealingLR(self.sgd, T_max, eta_min, last_epoch)
 
     def step(self):
@@ -36,7 +36,7 @@ class CosineDecay(object):
         return self.sgd.param_groups[0]['lr']
 
 class LinearDecay(object):
-    def __init__(self, death_rate, factor=0.99, frequency=600):
+    def __init__(self, prune_rate, factor=0.99, frequency=600):
         self.factor = factor
         self.steps = 0
         self.frequency = frequency
@@ -44,16 +44,16 @@ class LinearDecay(object):
     def step(self):
         self.steps += 1
 
-    def get_dr(self, death_rate):
+    def get_dr(self, prune_rate):
         if self.steps > 0 and self.steps % self.frequency == 0:
-            return death_rate*self.factor
+            return prune_rate*self.factor
         else:
-            return death_rate
+            return prune_rate
 
 
 
 class Masking(object):
-    def __init__(self, optimizer, death_rate=0.3, growth_death_ratio=1.0, death_rate_decay=None, death_mode='magnitude', growth_mode='momentum', redistribution_mode='momentum', threshold=0.001, args=None, train_loader=None, device=None):
+    def __init__(self, optimizer, prune_rate=0.3, growth_death_ratio=1.0, prune_rate_decay=None, death_mode='magnitude', growth_mode='momentum', redistribution_mode='momentum', threshold=0.001, args=None, train_loader=None, device=None):
         growth_modes = ['random', 'momentum', 'momentum_neuron', 'gradient']
         if growth_mode not in growth_modes:
             print('Growth mode: {0} not supported!'.format(growth_mode))
@@ -66,7 +66,7 @@ class Masking(object):
         self.death_mode = death_mode
         self.growth_death_ratio = growth_death_ratio
         self.redistribution_mode = redistribution_mode
-        self.death_rate_decay = death_rate_decay
+        self.prune_rate_decay = prune_rate_decay
         self.sparse_init = args.sparse_init
 
 
@@ -95,8 +95,8 @@ class Masking(object):
         self.total_nonzero = 0
         self.total_params = 0
         self.fc_params = 0
-        self.death_rate = death_rate
-        self.name2death_rate = {}
+        self.prune_rate = prune_rate
+        self.name2prune_rate = {}
         self.steps = 0
 
         if self.args.fix:
@@ -115,7 +115,6 @@ class Masking(object):
                     self.masks[name] = torch.ones_like(weight, dtype=torch.float32, requires_grad=False).cuda()
                     self.baseline_nonzero += (self.masks[name] != 0).sum().int().item()
             self.apply_mask()
-
         elif self.sparse_init == 'prune_uniform':
             # used for pruning stabability test
             print('initialized by prune_uniform')
@@ -393,24 +392,19 @@ class Masking(object):
 
 
         total_size = 0
+        for name, weight in self.masks.items():
+            total_size += weight.numel()
+
         sparse_size = 0
-        for module in self.modules:
-            for name, weight in module.named_parameters():
-                if name in self.masks:
-                    print(name, 'density:', (weight != 0).sum().item() / weight.numel())
-                    total_size += weight.numel()
-                    sparse_size += (weight != 0).sum().int().item()
-        print('Total Model parameters:', total_size)
-        print('Total parameters after sparse initialization'.format(sparse_size))
-        print('Network sparsity after sparse initialization'.format((total_size-sparse_size)/total_size))
-
-
+        for name, weight in self.masks.items():
+            sparse_size += (weight != 0).sum().int().item()
+        print('Total parameters under sparsity level of {0}: {1}'.format(density, sparse_size / total_size))
 
     def step(self):
         self.optimizer.step()
         self.apply_mask()
-        self.death_rate_decay.step()
-        self.death_rate = self.death_rate_decay.get_dr()
+        self.prune_rate_decay.step()
+        self.prune_rate = self.prune_rate_decay.get_dr()
         self.steps += 1
 
         if self.prune_every_k_steps is not None:
@@ -656,7 +650,7 @@ class Masking(object):
                     #DEATH
 
     def magnitude_death(self, mask, weight, name):
-        num_remove = math.ceil(self.death_rate*self.name2nonzeros[name])
+        num_remove = math.ceil(self.prune_rate*self.name2nonzeros[name])
         if num_remove == 0.0: return weight.data != 0.0
         num_zeros = self.name2zeros[name]
         k = math.ceil(num_zeros + num_remove)
@@ -724,7 +718,7 @@ class Masking(object):
                 val = '{0}: {1}->{2}, density: {3:.3f}'.format(name, self.name2nonzeros[name], num_nonzeros, num_nonzeros/float(mask.numel()))
                 print(val)
 
-        print('Death rate: {0}\n'.format(self.death_rate))
+        print('Death rate: {0}\n'.format(self.prune_rate))
 
     def reset_momentum(self):
         """

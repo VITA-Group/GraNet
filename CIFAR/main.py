@@ -232,7 +232,7 @@ def main():
                 print_and_log('='*60)
 
                 print_and_log('='*60)
-                print_and_log('Prune mode: {0}'.format(args.death))
+                print_and_log('Prune mode: {0}'.format(args.prune))
                 print_and_log('Growth mode: {0}'.format(args.growth))
                 print_and_log('Redistribution mode: {0}'.format(args.redistribution))
                 print_and_log('='*60)
@@ -271,8 +271,8 @@ def main():
 
         mask = None
         if args.sparse:
-            decay = CosineDecay(args.death_rate, len(train_loader)*(args.epochs*args.multiplier))
-            mask = Masking(optimizer, death_rate=args.death_rate, death_mode=args.death, death_rate_decay=decay, growth_mode=args.growth,
+            decay = CosineDecay(args.prune_rate, len(train_loader)*(args.epochs*args.multiplier))
+            mask = Masking(optimizer, prune_rate=args.prune_rate, death_mode=args.prune, prune_rate_decay=decay, growth_mode=args.growth,
                            redistribution_mode=args.redistribution, args=args, train_loader=train_loader)
             mask.add_module(model, sparse_init=args.sparse_init)
 

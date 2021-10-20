@@ -24,15 +24,15 @@ def add_sparse_args(parser):
     parser.add_argument('--density', type=float, default=0.10, help='The density of the overall sparse network.')
     parser.add_argument('--verbose', action='store_true', help='Prints verbose status of pruning/growth algorithms.')
     parser.add_argument('--fix', action='store_true', help='Fix topology during training. Default: True.')
-    parser.add_argument('--sparse_init', type=str, default='ER', help='sparse initialization')
+    parser.add_argument('--sparse-init', type=str, default='ER', help='sparse initialization')
     parser.add_argument('--multiplier', type=int, default=1, metavar='N', help='extend training time by multiplier times')
 
     # hyperparameters for GraNet
-    parser.add_argument('--update_frequency', type=int, default=2000, metavar='N', help='how many iterations to train between mask update')
+    parser.add_argument('--update-frequency', type=int, default=2000, metavar='N', help='how many iterations to train between mask update')
     parser.add_argument('--init-density', type=float, default=1.0, help='The initial density of sparse networks')
     parser.add_argument('--final-density', type=float, default=0.20, help='The target density of sparse networks.')
-    parser.add_argument('--init_prune_epoch', type=int, default=0, help='The pruning rate / death rate.')
-    parser.add_argument('--final_prune_epoch', type=int, default=30, help='The density of the overall sparse network.')
+    parser.add_argument('--init-prune-epoch', type=int, default=30, help='The starting epoch of gradual pruning.')
+    parser.add_argument('--final-prune-epoch', type=int, default=0, help='The ending epoch of gradual pruning.')
     parser.add_argument('--method', type=str, default='GraNet', help='method name: DST, GraNet, GMP')
     parser.add_argument('--rm_first', action='store_true', help='Keep the first layer dense.')
 
