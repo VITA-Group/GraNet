@@ -33,8 +33,7 @@ Options:
 * --final-density (float) - target density of the sparse model. (default 0.05)
 * --init-prune-epoch (int) - the starting epoch of gradual pruning.
 * --final-prune-epoch (int) - the ending epoch of gradual pruning.
-* --prune-rate (float) - The pruning rate / 
-rate for Zero-Cost Neuroregeneration.
+* --prune-rate (float) - The pruning rate for Zero-Cost Neuroregeneration.
 * --update-frequency (int) - number of training iterations between two steps of zero-cost neuroregeneration.
 
 ```
