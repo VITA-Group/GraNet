@@ -40,7 +40,7 @@ Options:
 
 The sparse operatin is in the sparsetraining/core.py file. 
 
-### GraNet (s_i = 0) starts from a dense network
+### GraNet (s_i = 0) starts from a dense network and prune to a 90% sparse network
 
 cd CIFAR
 
@@ -52,7 +52,7 @@ cd CIFAR
 
 python main.py --sparse --method GraNet --prune-rate 0.5 --optimizer sgd --sparse-init ERK --init-density 0.50 --final-density 0.10 --update-frequency 1000  --l2 0.0005  --lr 0.1 --epochs 160 --model ResNet50 --data cifar10  
 
-### RigL (ITOP Version)
+### RigL (ITOP Version) with 90% sparse network
 
 cd CIFAR
 
