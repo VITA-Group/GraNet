@@ -14,7 +14,7 @@ def add_sparse_args(parser):
     parser.add_argument('--sparse', action='store_true', help='Enable sparse mode. Default: True.')
     parser.add_argument('--fix', action='store_true', help='Fix topology during training. Default: True.')
     parser.add_argument('--update-frequency', type=int, default=100, metavar='N', help='how many iterations to train between mask update')
-    parser.add_argument('--sparse-init', type=str, default='ERK, uniform, uniform_structured for sparse training', help='sparse initialization')
+    parser.add_argument('--sparse-init', type=str, default='ERK, uniform distributions for sparse training, global pruning and uniform pruning for pruning', help='sparse initialization')
     # hyperparameters for gradually pruning
     parser.add_argument('--method', type=str, default='GraNet', help='method name: DST, GraNet, GraNet_uniform, GMP, GMO_uniform')
     parser.add_argument('--init-density', type=float, default=0.50, help='The pruning rate / death rate.')
@@ -243,63 +243,6 @@ class Masking(object):
                     self.baseline_nonzero += (self.masks[name] != 0).sum().int().item()
             self.apply_mask()
 
-        # structured pruning
-        elif self.sparse_init == 'prune_structured':
-            # uniformly structured pruning
-            print('initialized by pruning structured')
-
-            self.baseline_nonzero = 0
-            for module in self.modules:
-                for name, weight in module.named_parameters():
-                    if name not in self.masks: continue
-                    self.masks[name] = (weight != 0).cuda()
-                    nunits = weight.size(0)
-
-                    criteria_for_layer = weight.data.abs().view(nunits, -1).sum(dim=1)
-                    num_zeros = (criteria_for_layer == 0).sum().item()
-                    num_nonzeros = nunits-num_zeros
-                    num_remove = self.args.pruning_rate * num_nonzeros
-                    k = int(num_zeros + num_remove)
-                    x, idx = torch.sort(criteria_for_layer)
-                    self.masks[name][idx[:k]] = 0.0
-            self.apply_mask()
-
-        elif self.sparse_init == 'prune_and_grow_structured':
-            # # uniformly structured pruning
-            print('initialized by prune_and_grow_structured')
-
-            self.baseline_nonzero = 0
-            for module in self.modules:
-                for name, weight in module.named_parameters():
-                    if name not in self.masks: continue
-                    self.masks[name] = (weight != 0).cuda()
-                    nunits = weight.size(0)
-
-                    # prune
-                    criteria_for_layer = weight.data.abs().view(nunits, -1).sum(dim=1)
-                    num_zeros = (criteria_for_layer == 0).sum().item()
-                    num_nonzeros = nunits-num_zeros
-                    num_remove = self.args.pruning_rate * num_nonzeros
-                    print(f"number of removed channels is {num_remove}")
-                    k = int(num_zeros + num_remove)
-                    x, idx = torch.sort(criteria_for_layer)
-                    self.masks[name][idx[:k]] = 0.0
-
-                    # set the pruned weights to zero
-                    weight.data = weight.data * self.masks[name]
-                    if 'momentum_buffer' in self.optimizer.state[weight]:
-                        self.optimizer.state[weight]['momentum_buffer'] = self.optimizer.state[weight][
-                                                                              'momentum_buffer'] * self.masks[name]
-                    # grow
-                    num_remove = num_nonzeros - (weight.data.view(nunits, -1).sum(dim=1) != 0).sum().item()
-                    print(f"number of removed channels is {num_remove}")
-                    grad = grad_dict[name]
-                    grad = grad * (self.masks[name] == 0).float()
-                    grad_criteria_for_layer = grad.data.abs().view(nunits, -1).sum(dim=1)
-                    y, idx = torch.sort(grad_criteria_for_layer, descending=True)
-                    self.masks[name][idx[:num_remove]] = 1.0
-            self.apply_mask()
-
         elif self.sparse_init == 'uniform':
             self.baseline_nonzero = 0
             for module in self.modules:
@@ -308,17 +251,6 @@ class Masking(object):
                     self.masks[name][:] = (torch.rand(weight.shape) < density).float().data.cuda()  # lsw
                     # self.masks[name][:] = (torch.rand(weight.shape) < density).float().data #lsw
                     self.baseline_nonzero += weight.numel() * density
-            self.apply_mask()
-
-        elif self.sparse_init == 'uniform_structured':
-            self.baseline_nonzero = 0
-            for module in self.modules:
-                for name, weight in module.named_parameters():
-                    if name not in self.masks: continue
-                    nunits = weight.size(0)
-                    num_zeros = int(nunits * (1-density))
-                    zero_idx = np.random.choice(range(nunits), num_zeros, replace=False)
-                    self.masks[name][zero_idx] = 0.0
             self.apply_mask()
 
         elif self.sparse_init == 'ERK':
