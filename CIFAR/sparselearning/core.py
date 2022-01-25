@@ -375,7 +375,7 @@ class Masking(object):
         print('******************************************************')
 
 
-        if curr_prune_iter >= ini_iter and curr_prune_iter <= final_iter:
+        if curr_prune_iter >= ini_iter and curr_prune_iter <= final_iter - 1:
             prune_decay = (1 - ((curr_prune_iter - ini_iter) / total_prune_iter)) ** 3
             curr_prune_rate = (1 - self.args.init_density) + (self.args.init_density - self.args.final_density) * (
                     1 - prune_decay)
