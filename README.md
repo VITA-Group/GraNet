@@ -1,6 +1,6 @@
 # GraNet
 
-<img src="https://github.com/Shiweiliuiiiiiii/GraNet/blob/main/GraNet_github.png" width="800" height="300">
+<img src="https://github.com/Shiweiliuiiiiiii/GraNet/blob/main/GraNet_github.png" width="700" height="300">
 
 
 **Sparse Training via Boosting Pruning Plasticity with Neuroregeneration**<br>
@@ -107,7 +107,7 @@ if you find this repo is helpful, please cite
 @article{liu2021sparse, 
 title={Sparse Training via Boosting Pruning Plasticity with Neuroregeneration}, 
 author={Liu, Shiwei and Chen, Tianlong and Chen, Xiaohan and Atashgahi, Zahra and Yin, Lu and Kou, Huanyu and Shen, Li and Pechenizkiy, Mykola and Wang, Zhangyang and Mocanu, Decebal Constantin}, 
-journal={Advances in Neural Information Processing Systems.}, 
+journal={Advances in Neural Information Processing Systems},
 year={2021.}
 }
 ```
