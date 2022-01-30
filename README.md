@@ -99,4 +99,13 @@ python $1multiproc.py --nproc_per_node 2 $1main.py --sparse --sparse-init ERK --
 
 change --final-density to control the target sparsity
 
-More information is coming soon
+# Citation
+
+if you find this repo is helpful, please cite
+
+@article{liu2021sparse,
+  title={Sparse Training via Boosting Pruning Plasticity with Neuroregeneration},
+  author={Liu, Shiwei and Chen, Tianlong and Chen, Xiaohan and Atashgahi, Zahra and Yin, Lu and Kou, Huanyu and Shen, Li and Pechenizkiy, Mykola and Wang, Zhangyang and Mocanu, Decebal Constantin},
+  journal={Advances in Neural Information Processing Systems.},
+  year={2021.}
+}
